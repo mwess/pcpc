@@ -1,6 +1,7 @@
 #!/bin/bash
 
 # As specified on the exercise sheet
+# I wrote here more code last time ?!
 file=$1
 outputWidth=$2
 outputHeight=$3
@@ -21,6 +22,7 @@ do
 	then
 		#aufruf="/usr/local/bin/povray +I$file +W$outputWidth +H$outputHeight +FT +SR0.$start +ER0.$end +O$outputPath/$count.tga"
 		touch $outputPath/$count.tga
+                #the crap in the next line doesn't work
 		i=$(echo "Let the nodes work" | echo "/usr/local/bin/povray +I$file +W$outputWidth +H$outputHeight +FT +SR0.$start +ER0.$end +O$outputPath/$count.tga"|qsub )
 		#i=$(echo "Let the nodes work" | echo "hostname"|qsub -o output/$count.res)
 		echo "--> Sending job $aufruf to $node"

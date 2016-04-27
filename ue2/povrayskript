@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# authors: c.rauterberg, m.wess
+
 # As specified on the exercise sheet
 # I wrote here more code last time ?!
 file=$1

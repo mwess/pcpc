@@ -1,0 +1,68 @@
+#!/bin/bash
+
+# As specified on the exercise sheet
+file=$1
+outputWidth=$2
+outputHeight=$3
+outputPath=$4
+outputFile=$5
+
+# first, let us determine the total number of free nodes
+freeNodes=`pbsnodes -l free | wc -l`
+echo "There are currently $freeNodes free nodes available"
+# specify count and determine step number
+count=1
+step=$(python -c "print 100.0/($freeNodes-1)")
+for node in $(pbsnodes -l free | cut -d " " -f 1)
+do
+	start=$(python -c "print int(($count-1)*$step)")
+	end=$(python -c "print int(($count)*$step)")
+	if [ "$count" -lt "$freeNodes" ]
+	then
+		#aufruf="/usr/local/bin/povray +I$file +W$outputWidth +H$outputHeight +FT +SR0.$start +ER0.$end +O$outputPath/$count.tga"
+		touch $outputPath/$count.tga
+		i=$(echo "Let the nodes work" | echo "/usr/local/bin/povray +I$file +W$outputWidth +H$outputHeight +FT +SR0.$start +ER0.$end +O$outputPath/$count.tga"|qsub )
+		#i=$(echo "Let the nodes work" | echo "hostname"|qsub -o output/$count.res)
+		echo "--> Sending job $aufruf to $node"
+		let "count=count+1"
+	else
+		echo "All jobs submitted, let us see and maybe wait until they are done"
+		report=$(qstat -u pbsuser7)
+		while [ "$report" != "" ]
+		do
+			echo " QUEUE IN USE "
+			sleep 5 
+			report=$(qstat -u pbsuser7)
+		done
+		echo "Done. Put it together now"
+		#count=1
+		$count = $count - 1;
+		echo $outputPath
+		#for file in $outputPath/*
+		#do
+		#if [ -f "$file" ]
+		#	then
+		#		echo "Reworking $file"
+		#		echo "$count"
+		#		#tail -c +19 $file > $file_truncated.tga && mv $file_truncated.tga $file
+		#		#convert $file $file_conv.jpeg
+		#	fi
+		#done
+		touch $outputPath/$outputFile.tga
+		touch $outputPath/tmp.tga
+		for i in `seq 1 $count`;
+		do
+			echo $i
+			cat $outputPath/$outputFile.tga $outputPath/$i.tga > $outputPath/tmp.tga
+			cat $outputPath/tmp.tga > $outputPath/$outputFile.tga
+		done
+		convert $outputPath/$outputFile.tga $outputPath/$outputFile.jpeg
+		#cat $outputPath/* > full.tga
+	fi
+	#for f in $outputPath
+	#do
+	#	echo "$f"
+	#done
+done
+
+exit 1

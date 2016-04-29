@@ -15,7 +15,6 @@ distributeJobs(){
 merge(){
 	#Warten, bis alles fertig
 	running="`qstat -u pbsuser1`"
-#	echo $running
 	while [ "$running" != "" ]
 	do
 		echo "Waiting for Jobs."
@@ -26,12 +25,13 @@ merge(){
 	echo "All jobs are done."
 
 	`chmod +r *.tga`
-	touch output.tga
+	rm output
+	touch output
 	
-	`cat 1.tga >> output.tga`
+	`cat 0.tga >> output`
 	for((i=1; i<nodes;i++))
 	do
-		`tail -c +19 $i.tga >> output.tga`
+		`tail -c +19 $i.tga >> output`
 	done	
 }
 
@@ -57,4 +57,4 @@ echo "Nodes: $nodes"
 
 distributeJobs
 merge
-#cleanup
+cleanup

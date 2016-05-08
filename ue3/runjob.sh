@@ -28,3 +28,5 @@ start=$(($countNode1*$range))
 echo "Start: $start end: $end"
 # $4, $5, $6: Inputpath, Height, Width
 /usr/local/bin/povray +I$input $width $height +SR$start +ER$end +FT +O$output.tga
+#create outputcontrol file to check whether job ran completely
+touch $output.control

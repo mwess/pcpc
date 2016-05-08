@@ -62,6 +62,8 @@ do
 done
 
 #4.Error handling. Check if output file has been created, else execute command again
+#TODO: add timer here if output-file doesnt exist -> wait up to 15 seconds
+#TODO: check for output test image instead
 while [ $index -eq 0 ]
 do
     $index=1

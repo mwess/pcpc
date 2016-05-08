@@ -62,9 +62,10 @@ do
 done
 
 #4.Error handling. Check if output file has been created, else execute command again
+index=0
 while [ $index -eq 0 ]
 do
-    $index=1
+    index=1
     for((i = 0; i < nPictures; i++))
     do
         for((j = 0; j < nodesPerPicture; j++))
@@ -77,7 +78,7 @@ do
             done
             if [ ! -e $i_$j.control ]
             then
-                $index=0
+                index=0
                 ind=$((i*nodesPerPicture+j))
                 $jobstring[$ind]
             fi

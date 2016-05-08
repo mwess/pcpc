@@ -62,8 +62,8 @@ do
 done
 
 #4.Error handling. Check if output file has been created, else execute command again
-#TODO: add timer here if output-file doesnt exist -> wait up to 15 seconds
-#TODO: check for output test image instead
+#TODO: check other jobs while waiting for one that didnt work correctly
+time = 0
 while [ $index -eq 0 ]
 do
     $index=1
@@ -71,12 +71,20 @@ do
     do
         for((j = 0; j < nodesPerPicture; j++))
         do
-            if [ ! -e $i_$j.tga ]
-            then
-                $index=0
-                ind=$((i*nodesPerPicture+j))
-                $jobstring[$ind]
-            fi
+            $time = 0
+            while [ ! -e $i_$j.control ]
+            do
+                sleep 2
+                $time += 2
+                #if waiting lasted for over 20 seconds -> submit job again
+                if [ time > 20 ]
+                then
+                    $index=0
+                    ind=$((i*nodesPerPicture+j))
+                    $jobstring[$ind]
+                done
+                fi
+            done
         done
     done
     sleep 5

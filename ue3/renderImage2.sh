@@ -62,7 +62,6 @@ do
 done
 
 #4.Error handling. Check if output file has been created, else execute command again
-time = 0
 while [ $index -eq 0 ]
 do
     $index=1
@@ -70,20 +69,17 @@ do
     do
         for((j = 0; j < nodesPerPicture; j++))
         do
-            $time = 0
+            running="`qstat -u pbsuser1`"
+	        while [ "$running" != "" ]
+            do
+                sleep 2
+                running=`(qstat -u pbsuser1)`
+            done
             if [ ! -e $i_$j.control ]
             then
-                #sleep 2
-                #$time += 2
-                #if waiting lasted for over 20 seconds -> submit job again
-                #if [ time > 20 ]
-                #then
-                    $index=0
-                    ind=$((i*nodesPerPicture+j))
-                    $jobstring[$ind]
-                #done
-                #fi
-            done
+                $index=0
+                ind=$((i*nodesPerPicture+j))
+                $jobstring[$ind]
             fi
         done
     done

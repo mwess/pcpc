@@ -62,7 +62,6 @@ do
 done
 
 #4.Error handling. Check if output file has been created, else execute command again
-#TODO: check other jobs while waiting for one that didnt work correctly
 time = 0
 while [ $index -eq 0 ]
 do
@@ -72,19 +71,20 @@ do
         for((j = 0; j < nodesPerPicture; j++))
         do
             $time = 0
-            while [ ! -e $i_$j.control ]
-            do
-                sleep 2
-                $time += 2
+            if [ ! -e $i_$j.control ]
+            then
+                #sleep 2
+                #$time += 2
                 #if waiting lasted for over 20 seconds -> submit job again
-                if [ time > 20 ]
-                then
+                #if [ time > 20 ]
+                #then
                     $index=0
                     ind=$((i*nodesPerPicture+j))
                     $jobstring[$ind]
-                done
-                fi
+                #done
+                #fi
             done
+            fi
         done
     done
     sleep 5

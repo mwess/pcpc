@@ -3,277 +3,122 @@
 #Aufruf: ./renderImage.sh /usr/local/povray/share/povray-3.6/scenes/objects/fractal1.pov Width=20 Height=20 
 distributeJobs(){
 	#jobstring="qsub -v "
-	for((i = 0; i < nodes; i++))
+	for((j = 0; j < counter; j++))
 	do
-		jobstring="qsub -v path=$inputpath,$width,$height,nodes=$nodes,count=$i runjob.sh"
-		#echo "$jobstring"
-		$jobstring
-		echo "Job $i submitted."
+		for((i = 0; i < nodesPerPic; i++))
+		do
+			jobstring="qsub -v path=${inputpath[j]},Width=${width[j]},Height=${height[j]},nodes=$nodesPerPic,count=$i,pic=$j runjob.sh"
+			#echo "$jobstring"
+			$jobstring
+			echo "Job $i submitted."
+		done
 	done
-}
-
-distributeJobs2(){
-    #forward[$i]="${pictures[$i]}"
-    #backward["${pictures[$i]}"]=$i
-    #echo "${forward[$i]}"
-    #echo "${backward[${pictures[$i]}]}"
-    #echo "$nPictures"
-    #echo "$nodesPerPicture"
-        for((i = 0; i < nPictures; i++))
-        do
-            for((j = 0; j < nodesPerPicture; j++))
-            do
-                jobstring="qsub -v path=${forward[$i]},$width,$height,nodes=$nodesPerPicture,count=$j,output=$i runjob.sh"
-                echo "$jobstring"
-                #echo "Job $j of picture $i submitted."
-            done
-        done
-	##jobstring="qsub -v "
-	#for((i = 0; i < nodes; i++))
-	#do
-	#	jobstring="qsub -v path=$inputpath,$width,$height,nodes=$nodes,count=$i runjob.sh"
-	#	#echo "$jobstring"
-	#	$jobstring
-	#	echo "Job $i submitted."
-	#done
-}
-
-distributeJobs3(){
-    #forward[$i]="${pictures[$i]}"
-    #backward["${pictures[$i]}"]=$i
-    #echo "${forward[$i]}"
-    #echo "${backward[${pictures[$i]}]}"
-    #echo "$nPictures"
-    #echo "$nodesPerPicture"
-        for((i = 0; i < nPictures; i++))
-        do
-            for((j = 0; j < nodesPerPicture; j++))
-            do
-                jobstring="qsub -v path=${forward[$i]},$width,$height,nodes=$nodesPerPicture,count=$j,output=$i runjob.sh"
-                echo "$jobstring"
-                #echo "Job $j of picture $i submitted."
-            done
-        done
-	##jobstring="qsub -v "
-	#for((i = 0; i < nodes; i++))
-	#do
-	#	jobstring="qsub -v path=$inputpath,$width,$height,nodes=$nodes,count=$i runjob.sh"
-	#	#echo "$jobstring"
-	#	$jobstring
-	#	echo "Job $i submitted."
-	#done
-}
-
-merge2(){
-	#Warten, bis alles fertig
-	running="`qstat -u pbsuser1`"
-	while [ "$running" != "" ]
-	do
-		echo "Waiting for Jobs."
-		sleep 1
-		running=`(qstat -u pbsuser1)`
-	done
-	# erste 18 byte header, rest ist bild
-	echo "All jobs are done."
-
-	`chmod +r *.tga`
-
-        for((i = 0; i < nPictures; i++))
-        do
-            rm $i
-            touch $i
-            `cat $i_0.tga >> $i.tga`
-            rm $i_0.tga
-        done
-        for((i = 0; i < nPictures; i++))
-        do
-            for((j = 1; j < nodesPerPicture; j++))
-            do
-                `tail -c +19 $i_$j.tga >> $i.tga`
-                rm $i_$j.tga
-            done
-        done
-        for((i=0; i < nPictures; i++))
-        do
-            mv $i.tga ${forward[$i]}.tga
-        done
-	#rm output
-	#touch output
-	#
-	#`cat 0.tga >> output`
-	#for((i=1; i<nodes;i++))
-	#do
-	#	`tail -c +19 $i.tga >> output`
-	#done	
 }
 
 merge(){
 	#Warten, bis alles fertig
-	running="`qstat -u pbsuser1`"
-	while [ "$running" != "" ]
-	do
-		echo "Waiting for Jobs."
-		sleep 1
-		running=`(qstat -u pbsuser1)`
-	done
 	# erste 18 byte header, rest ist bild
 	echo "All jobs are done."
 
-	`chmod +r *.tga`
-	rm output
-	touch output
-	
-	`cat 0.tga >> output`
-	for((i=1; i<nodes;i++))
+	timer=0
+	for((j = 0; j < counter; j++))
 	do
-		`tail -c +19 $i.tga >> output`
+		for((i = 0; i < nodesPerPic; i++))
+		do
+			timer=0
+			running="`qstat -u pbsuser1`"
+			while [ "$running" != "" ]
+			do
+				echo "Waiting for Jobs."
+				sleep 1
+				running=`(qstat -u pbsuser1)`
+			done
+            		while [ ! -e "$j"_"$i"_control ]
+            		do
+			    echo "while,$timer,$j,$i"
+			    jobstring="qsub -v path=${inputpath[j]},Width=${width[j]},Height=${height[j]},nodes=$nodesPerPic,count=$i,pic=$j runjob.sh"
+		    	    if ((timer > 30))  
+			    then
+				echo $jobstring
+				$jobstring
+				timer=0
+				continue
+			    fi
+			    sleep 2
+			    ((timer+=2))
+            		done
+			echo "$timer,$j,$i"
+		done
+	done
+
+	`chmod +r *.tga`
+	rm *_output 
+	for((i = 0; i < counter; i++))
+	do
+		touch "$i"_output
 	done	
+
+	#Schleifen zum umspeichern
+	for((i=0; i<counter;i++))
+	do
+		`cat "$i"_0.tga >> "$i"_output`
+		for((j=1; j<nodesPerPic; j++))
+		do
+			`tail -c +19 "$i"_"$j".tga >> "$i"_output`
+		done
+	done
+#	`cat 0.tga >> output`
+#	for((i=1; i<nodes;i++))
+#	do
+#		`tail -c +19 $i.tga >> output`
+#	done	
 }
 
 cleanup(){
 	rm runjob.sh.*
-	rm *[0-9].tga
+	rm *.tga
+	rm *control
 }
 
 #Aufruf: ./renderImage.sh /usr/local/povray/share/povray-3.6/scenes/objects/fractal1.pov Width=20 Height=20 
+#./renderImage.sh /usr/local/povray/share/povray-3.6/scenes/objects/fractal1.pov Width=20 Height=20 /usr/local/povray/share/povray-3.6/scenes/advanced/skyvase.pov Width=2- Height=20
 
-#1.read in arguments and save all pictures in an array
-#function readparams(){
-declare -a pictures
-while [[ $# > 1 ]]
+counter=0
+declare -a inputpath
+declare -a width
+declare -a heigth
+
+for i in $@
 do
-key="$1"
-case $key in
-    -w|--width=*)
-    width="$2"
-    shift
-    ;;
-    -h|--height=*)
-    height="$2"
-    shift
-    ;;
-    #--default)
-    #pictures=("${pictures[@]}" $1)
-    #shift
-    #;;
-    *)
-    pictures=("${pictures[@]}" $1)
-    #echo $key
-    ;;
-esac
-shift
-done
-#}
-#2.create dictionaries for input file names
-declare -A forward
-declare -A backward
-nPictures=${#pictures[@]}
-for((i = 0; i < nPictures; i++))
-do
-    forward[$i]="${pictures[$i]}"
-    backward["${pictures[$i]}"]=$i
-    #echo "${forward[$i]}"
-    #echo "${backward[${pictures[$i]}]}"
+	a=$((counter/3))
+	if [ $(( $counter % 3 )) -eq 0 ]
+	then
+		inputpath[$a]=$i
+	#	inputpath_$counter=${inputpath##I}
+	fi
+	if [ $(( $counter % 3 )) -eq 1 ]
+	then
+		width[$a]=$i
+	#	width_$counter=${width##Width=}
+	fi
+	if [ $(( $counter % 3 )) -eq 2 ]
+	then
+		height[$a]=$i
+	#	height_$counter=${height##Height=}
+	fi
+	(( counter++ ))
 done
 
+#echo ${inputpath[1]}
+
+counter=$((counter/3))
 #nodes=`pbsnodes -l free | wc -l`
-nodes=40
+nodes=1
+nodesPerPic=$(( nodes/counter ))
 
-#compute how many node each picture gets
-nodesPerPicture=$((nodes/nPictures))
+echo "Nodes: $nodes"
+echo "Nodes Per Pic: $nodesPerPic"
 
-#distributeJobs2
-
-#3.save job commands in an array
-declare -a jobarray
-for((i = 0; i < nPictures; i++))
-do
-    for((j = 0; j < nodesPerPicture; j++))
-    do
-        jobstring="qsub -v path=${forward[$i]},$width,$height,nodes=$nodesPerPicture,count=$j,output=$i_$j.tga runjob.sh"
-        jobarray=("${jobarray[@]}" $jobstring)
-    pictures=("${pictures[@]}" $1)
-        echo "$jobstring"
-        #echo "Job $j of picture $i submitted."
-    done
-done
-
-#4.Error handling. Check if output file has been created, else execute command again
-index=0
-while [ $index -eq 0 ]
-do
-    index=1
-    for((i = 0; i < nPictures; i++))
-    do
-        for((j = 0; j < nodesPerPicture; j++))
-        do
-            if [ ! -e $i_$j.tga ]
-            then
-                index=0
-                ind=$((i*nodesPerPicture+j))
-                $jobstring[$ind]
-            fi
-        done
-    done
-    sleep 5
-done
-
-#5.Merge step
-`chmod +r *.tga`
-rm output
-touch output
-
-echo "All jobs are done."
-
-`chmod +r *.tga`
-
-for((i = 0; i < nPictures; i++))
-do
-    rm $i
-    touch $i
-    `cat $i_0.tga >> $i.tga`
-    rm $i_0.tga
-done
-for((i = 0; i < nPictures; i++))
-do
-    for((j = 1; j < nodesPerPicture; j++))
-    do
-        `tail -c +19 $i_$j.tga >> $i.tga`
-        rm $i_$j.tga
-    done
-done
-for((i=0; i < nPictures; i++))
-do
-    mv $i.tga ${forward[$i]}.tga
-done
-
-rm runjob.sh.*
-rm *[0-9].tga
-
-
-
-
-
-
-#inputpath=$1
-#inputpath1=${inputpath##I}
-#width=$2
-#width1=${width##Width=}
-#echo "Width $width1"
-#height=$3
-#height1=${height##Height=}
-#outputpath=$4
-#outputpath1=${outputpath##O}
-
-#echo "Nodes: $nodes"
-
-#distributeJobs
-#merge
-
-#cleanup
-#cleanup
-
-#readparams
-#echo "$width"
-#echo "$height"
-#echo ${pictures[@]}
+distributeJobs
+merge
+cleanup

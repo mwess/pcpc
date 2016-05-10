@@ -1,0 +1,5 @@
+plot(c(1,16),c(0,30),type="n",xlab="Nodes",ylab="Time")
+lines(a[,1],a[,2],col="red")
+lines(b[,1],b[,2],col="blue")
+lines(c[,1],c[,2],col="green")
+legend(13,25,c("100","1000","2000"),lty=c(1,1), lwd=c(2.5,2.5,2.5),col=c("red","blue","green"))

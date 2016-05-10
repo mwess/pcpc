@@ -1,0 +1,38 @@
+Exercise Sheet 2
+
+Assignment 1: Torque Portable Batch System
+qsub: Allows to submit a PBS job. Therefore, an executable script will be submitted to the batch server. The command does not execute the script on its own, but parses a script prior to the actual execution.
+
+qdel: Allows to delete a PBS job. The order of the deletion is according to the job identifiers. To delete the job, the server will sent a SIGTERM and a SIGKILL afterwards.
+
+qstat: Shows the status of a batch job on the standard output. Can output information about each job-identifier or all jobs with the same destination.
+
+pbsnodes: Lists all PBS nodes and specifies their status such as free or down.
+
+---------------------------------------------------------------------
+
+Assignment 2: PBS System in Computer Science Lab
+
+How many computing nodes are available in the pools?
+Shown by using pbsnodes -> 59 nodes available
+
+Which command shows all free nodes?
+pbsnodes -l free
+
+Which queues are defined and how long can a single job run?
+Command: qstat -q
+shanghai  
+seoul     
+jakarta   
+sao-paulo 
+lima      
+server    
+verylong  
+batch     
+moscow    
+delhi     
+karachi   
+bombay    
+istanbul 
+
+Timelimits for batch and bombay: 01:00:00, so 1h Walltime

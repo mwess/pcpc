@@ -86,7 +86,9 @@ cleanup(){
 counter=0
 declare -a inputpath
 declare -a width
-declare -a heigth
+declare -a width1
+declare -a height
+declare -a height
 
 for i in $@
 do
@@ -99,21 +101,42 @@ do
 	if [ $(( $counter % 3 )) -eq 1 ]
 	then
 		width[$a]=$i
+		width1[$a]=${width##Width=}
 	#	width_$counter=${width##Width=}
 	fi
 	if [ $(( $counter % 3 )) -eq 2 ]
 	then
 		height[$a]=$i
+		height1[$a]=${height##Height=}
 	#	height_$counter=${height##Height=}
 	fi
 	(( counter++ ))
 done
 
+#Speicherueberpruefung
+neededSpace=18
+space=`free -b | grep Mem | awk '{ print $4 }'`
+for((j = 0; j < counter; j++))
+do
+	a=${width1[j]}
+	b=${height1[j]}
+	#neededSpace=$(($neededSpace+(${width1[j]}*${height1[j]}*3)))
+	neededSpace=$(($neededSpace+(a*b*3)))
+done
+
+echo $neededSpace
+echo $space
+
+if((neededSpace > space ))
+then
+	exit
+fi
+
 #echo ${inputpath[1]}
 
 counter=$((counter/3))
-#nodes=`pbsnodes -l free | wc -l`
-nodes=1
+nodes=`pbsnodes -l free | wc -l`
+#nodes=1
 nodesPerPic=$(( nodes/counter ))
 
 echo "Nodes: $nodes"

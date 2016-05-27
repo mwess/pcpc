@@ -1,0 +1,5 @@
+2.1: The next thread in the queue will be executed next.
+
+2.2.a: 800000
+2.2.b: Race condition during the for loop in dotprod. Addition on the sum is not an atomic operation. Thus during the loop a process change can occur, so that some values are overwritten.
+2.2.d: Upper bound is 800000. Can be achieved if no race condition occurs. Lower bound: Is dependent from the moment and the amount of process changes. In worst case this is 100000. 

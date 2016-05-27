@@ -24,40 +24,55 @@
 int *a, *b; 
 long sum=0;
 
+/*First apply stuff from prob_2.c*/
+pthread_mutex_t lock;
+
 /*-----------------------------------------------------------*/
 
 /*----define here the barrier methods and struct-------------*/
-typedef struct {
-    int num;
-    int current;
-    pthread_mutex_t* mutexe;
+typedef struct
+{
+	int counter;
+	int finished;
+	pthread_mutex_t	block;
+	pthread_cond_t	bcond;
+
 } my_barrier_t;
 
-void my_barrier_create(my_barrier_t* barrier, int NUM){
-    barrier->num = NUM;
-    barrier->current = 0;
-    barrier->mutexe = (pthread_mutex_t*) malloc(sizeof(pthread_mutex_t)*barrier->num);
+my_barrier_t my_barrier;
+
+void my_barrier_create(my_barrier_t* barrier,int NUM)
+{
+	/*maybe include checking if num has the correct range*/
+	barrier->counter = NUM;
+	barrier->finished = 0;
+	pthread_mutex_init(&barrier->block,NULL);
+	pthread_cond_init(&barrier->bcond,NULL);
 }
 
-void my_barrier_wait(my_barrier_t* barrier){
-    pthread_mutex_lock(&barrier->mutexe[barrier->current]);
-    barrier->current++;
-    if(barrier->current==barrier->num){
-        for(int i = 0; i < barrier->num; i++){
-            pthread_mutex_unlock(&barrier->mutexe[i]);
-        }
-    }
+void my_barrier_wait(my_barrier_t* barrier)
+{
+	pthread_mutex_lock(&barrier->block);
+	if(--barrier->counter == 0)
+	{
+		barrier->finished = 1;
+		pthread_cond_broadcast(&barrier->bcond);
+	} 
+	else
+	{
+		while(!barrier->finished)
+		{
+			pthread_cond_wait(&barrier->bcond,&barrier->block);
+		}
+	}
+	pthread_mutex_unlock(&barrier->block);
 }
 
-void my_barrier_destroy(my_barrier_t* barrier){
-    for(int i = 0; i < barrier->num; i++){
-        pthread_mutex_destroy(&barrier->mutexe[i]);
-    }
-    free(barrier->mutexe);
+void my_barrier_destroy(my_barrier_t* barrier)
+{
+	pthread_mutex_destroy(&barrier->block);
+	pthread_cond_destroy(&barrier->bcond);
 }
-
-my_barrier_t barrier;
-pthread_mutex_t mutex;
 
 /*-----------------------------------------------------------*/
 
@@ -77,17 +92,17 @@ void *dotprod(void *arg)
    start = offset*len;
    end   = start + len;
 /* Perform my section of the dot product */
+   /*again stuff from prob_2.c*/
+   pthread_mutex_lock(&lock);
    printf("thread: %ld starting. start=%d end=%d\n",tid,start,end-1);
    for (i=start; i<end ; i++){
-      pthread_mutex_lock(&mutex);
       my_sum += (a[i] * b[i]); 
       sum += (a[i] * b[i]);
-      pthread_mutex_unlock(&mutex);
   }
-   
+   pthread_mutex_unlock(&lock);
    printf("thread: %ld proceeding to barrier \n",tid);   
+   my_barrier_wait(&my_barrier);
 
-   my_barrier_wait(&barrier);
    my_part = 100*my_sum / sum;
   
    printf("thread: %ld done. My part of the Global sum is = %.1lf %% \n",tid,my_part);
@@ -98,8 +113,8 @@ void *dotprod(void *arg)
 
 void init_pthread_variables(){
 
-    my_barrier_create(&barrier,NUMTHRDS);
-    pthread_mutex_init(&mutex,NULL);
+	pthread_mutex_init(&lock,NULL);
+	my_barrier_create(&my_barrier, NUMTHRDS);
 
 }
 
@@ -141,9 +156,9 @@ for(i=0; i<NUMTHRDS; i++)
 
 /* After joining, print out the results and cleanup */
 printf ("Final Global Sum=%li\n",sum);
-my_barrier_destroy(&barrier);
 free (a);
 free (b);
 pthread_exit(NULL);
+my_barrier_destroy(&my_barrier);
 }   
 

@@ -31,13 +31,9 @@ int producer_keep_running = 1;
 /*---------------------------------------------------*/
 /*-------declare Producer-Consumer variables here-----*/
 /*---------------------------------------------------*/
-
-pthread_mutex_t mutex;
-pthread_mutex_t mutexp;
-pthread_mutex_t mutexc;
-pthread_cond_t consume;
-pthread_cond_t produce;
-
+pthread_mutex_t getlock;
+pthread_mutex_t putlock;
+pthread_cond_t	emptycond;
 
 
 /*---------------------------------------------------*/
@@ -125,20 +121,16 @@ char* getPID(){
     char *pid;
     
     /*++++++++++++ add the missing code snippets here ++++++++++*/
-    pthread_mutex_lock(&mutexc);
-    int wait = 1;
-    while(wait){
-        pthread_cond_wait(&consume,&mutexc);
-        pthread_mutex_unlock(&mutexc);
-        pid = removePID();
-        pthread_mutex_lock(&mutexc);
-        wait = 0;
-    }
+    pthread_mutex_lock(&getlock);
+    while(!pid_queue.filled)
+	{
+		pthread_cond_signal(&emptycond);
+	}
+
+    pid = removePID();
+    
     /*++++++++++++ add the missing code snippets here ++++++++++*/
-    if(!pid_queue.filled){
-        pthread_cond_signal(&produce);
-    }
-    pthread_mutex_unlock(&mutexc);
+	pthread_mutex_unlock(&getlock);
     
     return pid;
     
@@ -148,25 +140,24 @@ char* getPID(){
 
 void putPID(){
     
-    pthread_mutex_lock(&mutexp);
+    
     while(producer_keep_running)
     {
         
         /*++++++++++++ add the missing code snippets here ++++++++++*/
-        if(pid_queue.filled){
-            pthread_cond_wait(&produce,&mutexp);
-        }
+		pthread_mutex_lock(&putlock);
+        //while(pid_queue.filled==0)
+		//{
+			pthread_cond_wait(&emptycond,&putlock);
+		//}
         
-        pthread_mutex_unlock(&mutexp);
         queue_filler();
-        pthread_mutex_lock(&mutexp);
         
         
         /*++++++++++++ add the missing code snippets here ++++++++++*/
-        pthread_cond_broadcast(&consume);
-        
+        pthread_mutex_unlock(&putlock);
+
     }
-    pthread_mutex_unlock(&mutexp);
     
     
 }
@@ -212,10 +203,9 @@ void init_pthread_variables(){
     
  
     /*++++++++++++ init the previously declared pthread variables here ++++++++++*/
-    pthread_cond_init(&consume,NULL);
-    pthread_cond_init(&produce,NULL);
-    pthread_mutex_init(&mutex,NULL);
-
+	pthread_mutex_init(&getlock,NULL);
+	pthread_mutex_init(&putlock,NULL);
+	pthread_cond_init(&emptycond,NULL);
 
 }
 

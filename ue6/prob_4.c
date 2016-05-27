@@ -54,6 +54,7 @@ void my_barrier_destroy(my_barrier_t* barrier){
 }
 
 my_barrier_t barrier;
+pthread_mutex_t mutex;
 
 /*-----------------------------------------------------------*/
 
@@ -75,8 +76,10 @@ void *dotprod(void *arg)
 /* Perform my section of the dot product */
    printf("thread: %ld starting. start=%d end=%d\n",tid,start,end-1);
    for (i=start; i<end ; i++){
+      pthread_mutex_lock(&mutex);
       my_sum += (a[i] * b[i]); 
       sum += (a[i] * b[i]);
+      pthread_mutex_unlock(&mutex);
   }
    
    printf("thread: %ld proceeding to barrier \n",tid);   
@@ -93,6 +96,7 @@ void *dotprod(void *arg)
 void init_pthread_variables(){
 
     my_barrier_create(&barrier,NUMTHRDS);
+    pthread_mutex_init(&mutex,NULL);
 
 }
 

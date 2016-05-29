@@ -1,5 +1,82 @@
+1.1: Advantages and drawbacks of following interprocess-communication mechanisms:
+1.1.i: Shared-Memory via shm_open():
+        - after using shm_open(), memory need to be mapped to the memory of the process
+        - usage of semaphores/mutexes necessary: difficult to implement
+        - multiple processes can access same shared memory
+        + data doesnt need to be transported => direct access for all processes
+        + ideal for huge amount of data
+1.1.ii: Unix named pipes:
+        + easy to use
+        + reading and writing processes dont need to be started at the same time (compared to unnamed pipes)
+        + processes can be independant
+        - no contents as long a its not opened by a process => buffered contents may be lost if writing end closes its connection
+        - unidirectional
+        - only one-to-one connections
+1.1.iii: Signaling Bus 'd-bus':
+        +/- works well/used for communication between desktop applications and system applications and user sessions
+        - supports only one-to-one connections
+
+1.2: General difference between 1:1 and n:m model for handling of threads inside an operating system?
+
+1.3: After a thread has been created, how do you know 
+1.2.a: when it will be scheduled to run?
+      This depends on the OS youre using. To check wether a thread is running or not, see 1.2.b
+1.2.b: which processor/core it will run on?
+        We cant know that before it actually runs. We can check where it runs by checking
+          /proc/<pid>/task/<tid>/status
+        (3rd field is R when its running, S while its sleeping)
+        6th to last field has the number of the core the process ran on last or is running on now
+
+1.4.a) What is the result and why?
+
+Creating thread 0
+Creating thread 1
+Creating thread 2
+Creating thread 3
+Creating thread 4
+Creating thread 5
+Creating thread 6
+Creating thread 7
+Hello from thread 140725997686472
+Hello from thread 140725997686472
+Hello from thread 140725997686472
+Hello from thread 140725997686472
+Hello from thread 140725997686472
+Hello from thread 140725997686472
+Hello from thread 140725997686472
+Hello from thread 140725997686472
+
+        As we can see, each thread prints the line "Hello from thread xyz", where xyz is the same id for all threads.
+        Because of that we cant check in which order the threads were executed.
+1.4.b) How to resolve this problem?
+        We could change line 24 to 
+        rc = pthread_create(&threads[t], NULL, PrintHello, (void *) t);
+        so that we can see in which order the threads were executed.
+        
+Creating thread 0
+Creating thread 1
+Creating thread 2
+Creating thread 3
+Creating thread 4
+Creating thread 5
+Creating thread 6
+Creating thread 7
+Hello from thread 1
+Hello from thread 2
+Hello from thread 0
+Hello from thread 7
+Hello from thread 6
+Hello from thread 5
+Hello from thread 4
+Hello from thread 3
+
+        (ist das wirklich das problem oder soll die Reihenfolge auch korrekt eingehalten werden?)
+
 2.1: The next thread in the queue will be executed next.
 
 2.2.a: 800000
 2.2.b: Race condition during the for loop in dotprod. Addition on the sum is not an atomic operation. Thus during the loop a process change can occur, so that some values are overwritten.
 2.2.d: Upper bound is 800000. Can be achieved if no race condition occurs. Lower bound: Is dependent from the moment and the amount of process changes. In worst case this is 100000. 
+
+3.a:
+3.b:

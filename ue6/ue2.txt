@@ -90,8 +90,8 @@ Hello from thread 3
 2.2.b: Race condition during the for loop in dotprod. Addition on the sum is not an atomic operation. Thus during the loop a process change can occur, so that some values are overwritten.
 2.2.d: Upper bound is 800000. Can be achieved if no race condition occurs. Lower bound: Is dependent from the moment and the amount of process changes. In worst case this is 100000. 
 
-3.a: 2 Mutexes and 1 condition variable:
-        pthread_mutex_t getlock;
-        pthread_mutex_t putlock;
+3.a: 1 Mutexe and 2 condition variables:
+        pthread_mutex_t lock;
+        pthread_cond_t filledcond;
         pthread_cond_t emptycond;
 3.b: In producer consumer problems it can occur that both are sleeping/waiting for the other or both are reading/writing at the same time. Its also possible that the consumer wants to consume when theres nothing to consume and that the producer wants to add elements if the queue is already full.

@@ -31,9 +31,9 @@
                                 - take care of your scheduling (n:m)
 
 1.3: After a thread has been created, how do you know 
-1.2.a: when it will be scheduled to run?
+1.3.a: when it will be scheduled to run?
       This depends on the OS youre using. To check wether a thread is running or not, see 1.2.b
-1.2.b: which processor/core it will run on?
+1.3.b: which processor/core it will run on?
         We cant know that before it actually runs. We can check where it runs by checking
           /proc/<pid>/task/<tid>/status
         (3rd field is R when its running, S while its sleeping)

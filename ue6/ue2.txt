@@ -2,7 +2,7 @@
 1.1.i: Shared-Memory via shm_open():
         - after using shm_open(), memory need to be mapped to the memory of the process
         - usage of semaphores/mutexes necessary: difficult to implement
-        - multiple processes can access same shared memory
+        + multiple processes can access same shared memory
         + data doesnt need to be transported => direct access for all processes
         + ideal for huge amount of data
 1.1.ii: Unix named pipes:

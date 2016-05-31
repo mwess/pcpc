@@ -93,13 +93,15 @@ void *dotprod(void *arg)
    end   = start + len;
 /* Perform my section of the dot product */
    /*again stuff from prob_2.c*/
-   pthread_mutex_lock(&lock);
+
    printf("thread: %ld starting. start=%d end=%d\n",tid,start,end-1);
    for (i=start; i<end ; i++){
+      pthread_mutex_lock(&lock);
       my_sum += (a[i] * b[i]); 
       sum += (a[i] * b[i]);
-  }
-   pthread_mutex_unlock(&lock);
+      pthread_mutex_unlock(&lock);
+   }
+
    printf("thread: %ld proceeding to barrier \n",tid);   
    my_barrier_wait(&my_barrier);
 

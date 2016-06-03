@@ -1,0 +1,60 @@
+Start computing with 256 x 256 matrices with 4 threads!
+Time Taken for Computation =0.092287 sec
+Start computing with 256 x 256 matrices with 8 threads!
+Time Taken for Computation =0.083624 sec
+Start computing with 256 x 256 matrices with 16 threads!
+Time Taken for Computation =0.085189 sec
+Start computing with 256 x 256 matrices with 32 threads!
+Time Taken for Computation =0.085151 sec
+Start computing with 256 x 256 matrices with 64 threads!
+Time Taken for Computation =0.086755 sec
+Start computing with 256 x 256 matrices with 128 threads!
+Time Taken for Computation =0.082760 sec
+Start computing with 256 x 256 matrices with 256 threads!
+Time Taken for Computation =0.089756 sec
+
+Start computing with 512 x 512 matrices with 4 threads!
+Time Taken for Computation =0.849498 sec
+Start computing with 512 x 512 matrices with 8 threads!
+Time Taken for Computation =0.825482 sec
+Start computing with 512 x 512 matrices with 16 threads!
+Time Taken for Computation =0.845643 sec
+Start computing with 512 x 512 matrices with 32 threads!
+Time Taken for Computation =0.821212 sec
+Start computing with 512 x 512 matrices with 64 threads!
+Time Taken for Computation =0.818145 sec
+Start computing with 512 x 512 matrices with 128 threads!
+Time Taken for Computation =0.849006 sec
+Start computing with 512 x 512 matrices with 256 threads!
+Time Taken for Computation =0.833512 sec
+
+Start computing with 1024 x 1024 matrices with 4 threads!
+Time Taken for Computation =8.082391 sec
+Start computing with 1024 x 1024 matrices with 8 threads!
+Time Taken for Computation =8.149690 sec
+Start computing with 1024 x 1024 matrices with 16 threads!
+Time Taken for Computation =8.182684 sec
+Start computing with 1024 x 1024 matrices with 32 threads!
+Time Taken for Computation =8.140353 sec
+Start computing with 1024 x 1024 matrices with 64 threads!
+Time Taken for Computation =8.066710 sec
+Start computing with 1024 x 1024 matrices with 128 threads!
+Time Taken for Computation =8.801739 sec
+Start computing with 1024 x 1024 matrices with 256 threads!
+Time Taken for Computation =10.368350 sec
+
+Start computing with 2048 x 2048 matrices with 4 threads!
+Time Taken for Computation =79.923709 sec
+Start computing with 2048 x 2048 matrices with 8 threads!
+Time Taken for Computation =83.701815 sec
+Start computing with 2048 x 2048 matrices with 16 threads!
+Time Taken for Computation =82.289037 sec
+Start computing with 2048 x 2048 matrices with 32 threads!
+Time Taken for Computation =86.782087 sec
+Start computing with 2048 x 2048 matrices with 64 threads!
+Time Taken for Computation =84.842912 sec
+Start computing with 2048 x 2048 matrices with 128 threads!
+Time Taken for Computation =84.154374 sec
+Start computing with 2048 x 2048 matrices with 256 threads!
+Time Taken for Computation =77.575380 sec
+

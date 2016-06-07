@@ -1,0 +1,37 @@
+Assignment 1
+-----------------------------------------------------------
+a) Which schedulers are implemented in the Yarn framework?
+- Capacity Scheduler: maximizes throughput and utilization of the cluster
+- Fair Scheduler: allows apps to share the resources in a fair manner
+Which one is used in our cluster?
+Capacity Scheduler, the scheduling resource type is "memory"
+
+b) Explain the basic functionality of the fair scheduler!
+- all apps should get an equal share of resources over time
+- scheduling decisions based on memory by default, can be condigured to use both memory and CPU
+- single app: whole cluster
+  second app: free resources assigned to new job
+  => each app approx. the same amount of resources (memory)
+- lets short apps finish in reasonable time, doesnt starve long jobs
+- priorities can be used as well
+
+Assignment 2
+
+see testat
+
+Assignment 5
+------------------------------------------------------------
+a) Why do you think MapReduce and Hadoop were such a great success?
+
+The user doesnt need to bother with distribution of jobs, restarting jobs in case of errors or anything similar like he has to with e.g. PBS.
+Thats quite comfortable and quick and easy, so hadoop can be learned and used faster in our opinion than other methods to parallelize huge jobs.
+
+b) What are the limitations? Are there any problem classes that can not be impl
+emented with the help of this computation model?
+
+A possible limitation could be that the nodes can not communicate with each other, so that the subjobs have to be independent. 
+
+Also, MapReduce is only used for batch processing jobs, so no interactive jobs
+can be computed.
+
+It also is a problem to use MapReduce on problems that can not be partitioned into smaller subproblems, such as complex algorithms (traveling salesperson).

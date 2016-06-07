@@ -8,7 +8,7 @@ int main(int argc, char *argv[])
     long ** m1, ** m2, ** prod;
     
     int i,j,k,r1,c1,r2,c2, result=0, thread_id=42, number_of_threads=23;
-    double time = 0, global_time = 0;
+    double time = 0, global_time = 0, timeend=0, global_time_end = 0;
     r1 = c1 = r2 = c2 = atoi(argv[1]); //Input from command line argument. Restricting to square matrices.
     /*
     printf("Enter number of rows and columns of first matrix\n");
@@ -67,13 +67,14 @@ int main(int argc, char *argv[])
             omp_set_num_threads(nThreads);
             printf("Number of threads: %d\n", omp_get_num_threads());
              global_time = omp_get_wtime(); 
-//#pragma omp parallel shared(prod,m1,m2,r1,c2,c1)  private(i,j,k,time)
-#pragma omp parallel default(shared)  private(i,j,k,time)
+#pragma omp parallel shared(prod,m1,m2,r1,c2,c1)  private(i,j,k,time)
+//#pragma omp parallel default(shared)  private(i,j,k,time)
         {
         time = omp_get_wtime();
-        #pragma omp for schedule(dynamic)
+        #pragma omp parallel for schedule(dynamic)
         for(i=0;i<r1;i++)
         {
+
             for(j=0;j<c2;j++)
             {
                 prod[i][j] = 0;
@@ -85,16 +86,15 @@ int main(int argc, char *argv[])
                 // number_of_threads=...
                 thread_id = omp_get_thread_num();
                 number_of_threads = omp_get_num_threads();
-                    printf("Thread#%d of %d computed prod[%d][%d]=%lu\t\n",omp_get_thread_num(),number_of_threads,i,j,prod[i][j]);
-                
+                //printf("Thread#%d of %d computed prod[%d][%d]=%lu\t\n",omp_get_thread_num(),number_of_threads,i,j,prod[i][j]);
             }
-            printf("\n");
+            //printf("\n");
         }
-        time = omp_get_wtime() - time;
-        //printf("Execution time thread %d:%f\n", thread_id, time);
+        timeend = omp_get_wtime();
+        //printf("Execution time thread %d:%f\n", thread_id, timeend - time);
         }
-        global_time = omp_get_wtime() - global_time;
-        printf("Execution global_time %f\n", global_time);
+        global_time_end = omp_get_wtime();
+        printf("Execution global_time %f\n", global_time_end - global_time);
     }
 
 /* FIXME: add a timing routing that might look like:

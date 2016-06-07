@@ -55,6 +55,7 @@ for (i=0; i<VECLEN*NUMTHRDS; i++)
  * routine. Their offset into the global vectors is specified by passing
  * the "i" argument in pthread_create().
  */
+pthread_mutex_init(&mutex,NULL);
 pthread_attr_init(&attr);
 pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
 for(i=0; i<NUMTHRDS; i++) 

@@ -2,15 +2,6 @@
 #include "stdlib.h"
 #include "omp.h"
 
-//##########################################
-// 
-// PCPC _ Assignment 08
-// Maximilian Weß && Christoph Rauterberg
-//
-//##########################################
-
-// prints included...
-
 //Execute as: ./q2 6 (command line param assigns size of two square matrices to be multiplied)
 int main(int argc, char *argv[])
 {
@@ -27,12 +18,6 @@ int main(int argc, char *argv[])
 	}
 
     r1 = c1 = r2 = c2 = atoi(argv[1]); //Input from command line argument. Restricting to square matrices.
-    /*
-    printf("Enter number of rows and columns of first matrix\n");
-    scanf("%d%d",&r1,&c1);
-    printf("Enter number of rows and columns of second matrix\n");
-    scanf("%d%d",&r2,&c2);
-    */
     if (argc==3) {
       p = atoi(argv[2]);
     }
@@ -63,16 +48,16 @@ int main(int argc, char *argv[])
         //Populate the matrices & print out to see it is correctly allocated memory.
 	// We can parallize this as well
         printf("Populating the matrices ...\n");
-	#pragma omp parallel default(shared) private(i,j)
+	//#pragma omp parallel default(shared) private(i,j)
 	{
-		#pragma omp for schedule(dynamic)
+		//#pragma omp for schedule(dynamic)
 		for(i=0; i<r1; i++)
 		{
 		    for(j=0; j<c1; j++){
 		        m1[i][j] = j+1;
 		    }
 		}
-		#pragma omp for schedule(dynamic)
+		//#pragma omp for schedule(dynamic)
 		for(i=0; i<r2; i++)
 		{
 		    for(j=0; j<c2; j++){
@@ -101,7 +86,7 @@ int main(int argc, char *argv[])
 	// ###############################################
 	printf("Matrices populated, proceeding to multiply ...\n");
 	
-	for( int numbThreads = 8; numbThreads <= 8; numbThreads *= 2) {
+	for( int numbThreads = 8; numbThreads <= 256; numbThreads *= 2) {
 		printf("Start computing with %d x %d matrices with %d threads!\n",r1,c1,numbThreads);
 		omp_set_num_threads(numbThreads);
 		start = omp_get_wtime ();
@@ -122,15 +107,15 @@ int main(int argc, char *argv[])
 				    // Get right Thread ID and Number of Threads using OMP functions
 				thread_id = omp_get_thread_num();
 				number_of_threads = omp_get_num_threads();
-				//if ( p != 0 ) {		        
+				if ( p != 0 ) {		        
 					printf("Thread#%d of %d computed prod[%d][%d]=%lu\t\n",thread_id,number_of_threads,i,j,prod[i][j]);
-				//}
+				}
 				}
 				if ( p != 0)
 					printf("\n");
 			}
 			myend = omp_get_wtime ();
-			printf("I am thread#%d, and my computation took %f sec.\n",omp_get_thread_num(),(myend-mystart));
+			//printf("I am thread#%d, and my computation took %f sec.\n",omp_get_thread_num(),(myend-mystart));
 		} /* end of parallel section */
 		// ###############################################
 

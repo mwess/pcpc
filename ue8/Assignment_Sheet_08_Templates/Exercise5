@@ -1,0 +1,18 @@
+What does #pragma parallel for do?
+=> runs the following code in several threads (number defined by system, can be changed by "export ...")
+
+What is the problem of data or loop dependence?
+=> Cant be parallelized because we need the newly calculated data for further calculations
+
+Run the parallel for directive with more than 1 thread. What might go wrong?
+=> its possible to read values that has not been set yet
+
+How can you fix this without modifying the computation logic, i.e. using OpenMP fea-
+tures?
+=> change execution to "pragma omp ordered"
+
+
+Modify the program logic such that the program behaves correctly with multiple
+threads. Use the schedule clause to show how the iterations are divided among
+threads.
+=> its not possible to change the logic completely and to parallelize the computation of fact because of the dependence of the results

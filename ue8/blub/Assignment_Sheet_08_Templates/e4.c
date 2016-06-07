@@ -87,12 +87,11 @@ int main(int argc, char *argv[])
 	printf("Matrices populated, proceeding to multiply ...\n");
 	
 	for( int numbThreads = 8; numbThreads <= 256; numbThreads *= 2) {
-		printf("Start computing with %d x %d matrices with %d threads!\n",r1,c1,numbThreads);
 		omp_set_num_threads(numbThreads);
+		printf("Start computing with %d x %d matrices with %d threads!\n",r1,c1,omp_get_num_threads());
 		start = omp_get_wtime ();
 		#pragma omp parallel default(shared) private(i,j,k,tmp,mystart,myend)
 		{ /* start of parallel section */
-			//printf("I am thread#%d\n",omp_get_thread_num());
 			mystart = omp_get_wtime ();
 			#pragma omp for schedule(dynamic)
 			for(i=0;i<r1;i++)

@@ -86,7 +86,7 @@ int main(int argc, char *argv[])
                 // number_of_threads=...
                 thread_id = omp_get_thread_num();
                 number_of_threads = omp_get_num_threads();
-                //printf("Thread#%d of %d computed prod[%d][%d]=%lu\t\n",omp_get_thread_num(),number_of_threads,i,j,prod[i][j]);
+                printf("Thread#%d of %d computed prod[%d][%d]=%lu\t\n",omp_get_thread_num(),number_of_threads,i,j,prod[i][j]);
             }
             //printf("\n");
         }

@@ -40,8 +40,8 @@ int main(int argc, char *argv[])
         }
         
         //Populate the matrices & print out to see it is correctly allocated memory.
-        printf("Populating the matrices ...\n");
-        printf("Matrix 1:\n");
+        //printf("Populating the matrices ...\n");
+        //printf("Matrix 1:\n");
         for(i=0; i<r1; i++)
         {
             for(j=0; j<c1; j++){
@@ -63,38 +63,36 @@ int main(int argc, char *argv[])
 
 //	omp_set_num_threads(8);
         for(int nThreads = 4; nThreads < 257; nThreads *= 2){
-            printf("Number of threads: %d\n", nThreads);
             omp_set_num_threads(nThreads);
+            omp_set_num_threads(12);
             printf("Number of threads: %d\n", omp_get_num_threads());
-             global_time = omp_get_wtime(); 
-//#pragma omp parallel shared(prod,m1,m2,r1,c2,c1)  private(i,j,k,time)
-#pragma omp parallel default(shared)  private(i,j,k,time)
-        {
-        time = omp_get_wtime();
-        #pragma omp for schedule(dynamic)
-        for(i=0;i<r1;i++)
-        {
-            for(j=0;j<c2;j++)
+            global_time = omp_get_wtime(); 
+            //#pragma omp parallel shared(prod,m1,m2,r1,c2,c1)  private(i,j,k,time)
+            #pragma omp parallel default(shared)  private(i,j,k,time)
             {
-                prod[i][j] = 0;
-                for(k=0;k<c1;k++)
-                    prod[i][j] += m1[i][k]*m2[k][j];
+                time = omp_get_wtime();
+                #pragma omp for schedule(static)
+                for(i=0;i<r1;i++)
+                {
+                    for(j=0;j<c2;j++)
+                    {
+                        prod[i][j] = 0;
+                        for(k=0;k<c1;k++)
+                            prod[i][j] += m1[i][k]*m2[k][j];
                 
-                // FIXME: How to get the right thread-ID?
-                // thread_id=...
-                // number_of_threads=...
-                thread_id = omp_get_thread_num();
-                number_of_threads = omp_get_num_threads();
-                    printf("Thread#%d of %d computed prod[%d][%d]=%lu\t\n",omp_get_thread_num(),number_of_threads,i,j,prod[i][j]);
+                        thread_id = omp_get_thread_num();
+                        number_of_threads = omp_get_num_threads();
+                    //printf("Thread#%d of %d computed prod[%d][%d]=%lu\t\n",omp_get_thread_num(),number_of_threads,i,j,prod[i][j]);
                 
             }
-            printf("\n");
+            //printf("\n");
         }
         time = omp_get_wtime() - time;
         //printf("Execution time thread %d:%f\n", thread_id, time);
         }
         global_time = omp_get_wtime() - global_time;
-        printf("Execution global_time %f\n", global_time);
+        //printf("Execution global_time %f\n", global_time);
+        printf("%f\n", global_time);
     }
 
 /* FIXME: add a timing routing that might look like:

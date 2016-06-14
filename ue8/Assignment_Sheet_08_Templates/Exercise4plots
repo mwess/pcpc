@@ -1,0 +1,3 @@
+The plots can be seen in the files plotNxN.png where N is the matrix size.
+The number of threads per matrix calculation starts with one thread and is doubled with each iteration. For the x-axis a log scale is used. 
+Looking at the plot for 2048x2048 matrix we can see that the parallization works for 2 and 4 threads. When more threads are used the improvement on the runtime stops.

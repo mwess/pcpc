@@ -1,0 +1,82 @@
+% --------------------------------------------------------------
+% This is all preamble stuff that you don't have to worry about.
+% Head down to where it says "Start here"
+% --------------------------------------------------------------
+ 
+\documentclass[12pt]{scrartcl}
+ 
+\usepackage[margin=1in]{geometry} 
+\usepackage{amsmath,amsthm,amssymb}
+\usepackage[utf8]{inputenc}
+\usepackage{scrpage2}
+ 
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+ 
+\newenvironment{theorem}[2][Theorem]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}\hskip \labelsep {\bfseries #2.}]}{\end{trivlist}}
+\newenvironment{lemma}[2][Lemma]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}\hskip \labelsep {\bfseries #2.}]}{\end{trivlist}}
+\newenvironment{exercise}[2][Exercise]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}\hskip \labelsep {\bfseries #2.}]}{\end{trivlist}}
+\newenvironment{reflection}[2][Reflection]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}\hskip \labelsep {\bfseries #2.}]}{\end{trivlist}}
+\newenvironment{proposition}[2][Proposition]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}\hskip \labelsep {\bfseries #2.}]}{\end{trivlist}}
+\newenvironment{corollary}[2][Corollary]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}\hskip \labelsep {\bfseries #2.}]}{\end{trivlist}}
+ 
+\begin{document}
+ 
+% --------------------------------------------------------------
+%                         Start here
+% --------------------------------------------------------------
+ 
+%\renewcommand{\qedsymbol}{\filledbox}
+
+\pagestyle{scrheadings}
+\clearscrheadfoot
+\ohead{Maximilian Wess, Hanna Holderied}
+ 
+\title{Practical Course in Parallel Computing - Exercise 9}%replace X with the appropriate number
+\author{Maximilian Wess, Hanna Holderied\\
+\tiny{last edited \today}}
+\date{}
+
+\maketitle
+%\newpage
+
+\begin{enumerate}
+    \item{Exercise 1}
+        \begin{enumerate}
+            \item For Exercise 1, please see e1.c. To solve the problem lines 59 and 60 need to be switched.
+            \item Using for instance, mpirun -n 2 -hosts c000,c001 ./e1
+            \item See e1\_pbs.sh
+        \end{enumerate}
+    \item{Exercise 2}
+        \begin{enumerate}
+            \item See e21.c.
+            \item See e22.c
+        \end{enumerate}
+    \item{Exercise 3}
+        Using e3c. the functions can be explained as follows( not that e3 was executed with mpirun -n 4 e3):
+        \begin{enumerate}
+            \item{MPI\_Gather} Arrays x and y are initialized with whitespaces. The first position of x is filled with 'a' + rank. The root rank in this case is 1. Using MPI\_Gather all processes send the first character in the x array to the root process, which uses the char array y as a receive buffer. For that reason the y array contains a b c d. Moreover MPI\_Gather orders the received data chunks, i.e. process 0 gets the first part of the receiving array, pprocess 1 gets the second part and so on. 
+            \item{MPI\_Allgather} MPI\_Allgather workds similiar to MPI\_Gather except that not only the root process, but all processes receive the send buffer.
+            \item{MPI\_Scatter} The send buffer of the root process is partitioned into chunks. TGhen each chunk is sent to one process. The receivers are again ordered, i.e. process 0 gets the first chunks, process 1 the second and so on. In the example one can see that the array e f g h is partitioned into 4 chunks. Process 0 receives e, process 1 receives f,...
+            \item{MPI\_Alltoall} In each process the sendbuff is split into n chunks (n is the number of processes). Each chunk contains sendcount elements. The recvbuf is partitioned accordingly. The process j sends the k-th block of its local sendbuff to process k, which places the data in the j-th block of its recvbyuf. In the exapmle this means for instance, that for n=4 chunk 0 of process 3 (m) is send to process 0 and is placed in the recv buffer at position 3. 
+            \item{MPI\_Bcast} The root process sends the send buffer to every other process. In the example only the root process has character b in the sendbufgf, but after calling MPI\_Bcast every other process has received the character.
+        \end{enumerate}
+    \item{Exercise 4}
+        \begin{enumerate}
+            \item See ex1\_plot.pdf.
+            \item See e4b.c and ex2\_plot.pdf.
+            \item See e4c.c and ex3\_plot.pdf.
+            \item See e4d1.c, e4d2.c, e4d3.c and e4d4.c.
+        \end{enumerate}
+\end{enumerate}
+
+
+%\input{ex01/main}
+
+\end{document}

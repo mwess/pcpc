@@ -1,0 +1,20 @@
+MPI_Gather:
+	-initialize arrays x and y with whitespaces
+	-then add the letter a + rank to the first position in x
+	-then use MPI_Gather with count as 1 to get the first character of the x array.
+	-in the output only one letter is printed because the rest is whitespaces except for the "gatherer" who has a full receive buffer (rank 1)
+	
+
+MPI_Allgather:
+	-allgather works similar to gather except that all ranks receive all messages (see full buffer in every rank)
+
+MPI_Scatter:
+	-the send buffer is partitioned over all ranks. the send buffer to be partitioned is determined by root.
+
+MPI_Alltoall:
+	-for each rank, the receiver buffer is divided in number of ranks chunks of size (recv buff size / number of ranks).
+	-the send-chunks are then taken from lowest to highest rank and from first to last chunk.
+	-the recv-chunks are filled from left to right and from lowest rank to highest rank.
+
+MPI_Bcast:
+	-one sender sends one message to all other ranks.

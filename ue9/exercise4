@@ -1,0 +1,6 @@
+1) plot ex1_plot.pdf
+
+2) sequentiell fuer mehrere sailors. funktionen etc. hinzugefuegt. plot ex2_plot.pdf
+
+3) parallelisiert mit openmpi. plot ex3_plot.pdf
+

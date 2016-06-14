@@ -1,0 +1,32 @@
+1) Each process prints the position of its sailor at every time step.
+2) The process of rank 0 shall print the position of every sailor in every time step.
+
+For 3 sailors these two versions might look like
+
+# Time Sailor Position
+1 1 26
+1 2 43
+1 3 23
+
+2 1 25
+2 2 45
+2 3 15
+...
+
+------------------------------------------------------------------------
+
+3) The process of rank 0 shall print the position of all sailors in the end. First the timeline of all steps from sailor 1, then all steps from sailor 2…
+4) Each process shall print all positions of its sailor in a timeline at the end of the simulation. Make sure that only one process prints the timeline at a time.
+
+And again for 3 sailors these two might look like
+
+# Time Sailor Positon
+1 1 26
+2 1 25
+
+1 2 43
+2 2 45
+
+1 3 15
+2 3 23
+...

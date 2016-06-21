@@ -70,6 +70,8 @@ With minimal contacts between the gridparts we can make sure that there is littl
 
 3.e) Probably, yes.
 
-4.) already implemented
+4.) Only rank 0 saves the results at the end of each iteration. This is a simple procedure: every process sends its results to the process with rank 0 and
+its collected and ,afterwards, saved there.
+Another possibility would be to allocate memory for every time step for the whole grid. This would cause that the processes could just write their results to the correct location in the allocated memory and the rank 0 process would not need to coordinate everything.
 
 5.)

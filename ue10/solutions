@@ -1,0 +1,75 @@
+Sheet 10
+=====================================================================
+
+Exercise 1
+---------------------------------------------------------------------
+1.a) What does init_particles() at line 28 do? 
+
+In init_particles() we first initialize our particle positions. To do this, we define sx and sy as borders in which the particles must appear in the beginning. 
+In line 61 we create a permutation of our particles using the shuffle-array, afterwards we distribute our particles in our field evenly. 
+In the end we have to give our particles a starting velocity.
+
+
+1.b) What happens in line 34, 39-43 and 49-50?
+
+34: for-loop over NSTEPS (1000): for every particle, we first apply apply_force, then we move (and maybe save our particles) .
+
+43: apply_force(): this function computes the acceleration of a particle in dependence of every other particle by interparticle forces
+
+50: move_particle(): According to precalculated accelarations and velocities, we now compute new velocities and endpoints of this timestep.
+If a particle moves outside of our window, we have to calculate how it bounces back into it.
+
+
+1.c) Why do you think are the particle positions only saved every SAVEFREQ time steps?
+
+You can save memory/computation time by doing so - as result, the particles of course will move faster because they have less "stop points" in between(which they have to reach in the same time span). 
+
+
+2.a) done
+2.b) init_particles() shouldnt be parallelized due to the fact that it shuffles the whole array of particles.
+2.c) done
+2.d) For the sake of simplicity you might keep an array of all particle positions in every process and exchange it after each time step. Which collective communication function fits best for this purpose? What is the drawback of this approach in terms of scalability?
+
+Collective method: Allgather collects the information
+Drawback: large overhead due to communication if lot of processes are working
+
+2.e) The save routine should save every x steps again, this should be done after the Allgather, because all processes are on the same "level"/progress at this point of time.
+
+2.f) done
+
+
+3. Discuss some possibilities to further optimize the algorithm and parallelization in terms of overall runtime.
+
+To further optimize the program one could try to avoid the massive dataflow caused by the Allgather in every process running (Master Slave principle: Master collects and distributes data to slaves).
+Moreover we could limit the number of processes running (see 2.d).
+
+
+
+Exercise 2
+---------------------------------------------------------------------
+1.) no FIXME left :)
+
+2.) Why MPI instead of OpenMP?
+In this exercise we often read/write data that would be used by multiple processes/threads. To protect the data with the shared memory approach of OpenMP would be difficult/slow, so its better to use MPI without shared memory instead.
+
+3.a) To minimize the edges we will divide the grid into squares, so it may look like this:
+-------------
+|     |     |
+|     |     |
+-------------
+|     |     |
+|     |     |
+-------------
+With minimal contacts between the gridparts we can make sure that there is little communication between them.
+
+3.b) Each processor with copy of whole grid
+
+3.c) done
+
+3.d)
+
+3.e) Probably, yes.
+
+4.) already implemented
+
+5.)

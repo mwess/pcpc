@@ -1,5 +1,5 @@
 #include "cuda.h"
-#include "......"
+#include "bitmap.h"
 
 #define DIM 1024
 #define PI 3.1415926535897932f
@@ -15,11 +15,12 @@ __global__ void kernel( unsigned char *ptr ) {
     // now calculate the value at that position
     const float period = 128.0f;
 
-    sub[threadIdx.x][threadIdx.y] =
+    __shared__ sub[threadIdx.x][threadIdx.y] =
             255 * (sinf(x*2.0f*PI/ period) + 1.0f) *
                   (sinf(y*2.0f*PI/ period) + 1.0f) / 4.0f;
+    __syncthreads();
 	
-	/assign color for each pixel position
+	//assign color for each pixel position
     ptr[offset*4 + 0] = 0;
     ptr[offset*4 + 1] = sub[15-threadIdx.x][15-threadIdx.y];
     ptr[offset*4 + 2] = 0;

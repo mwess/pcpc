@@ -10,12 +10,12 @@ __global__ void kernel( unsigned char *ptr ) {
     int y = threadIdx.y + blockIdx.y * blockDim.y;
     int offset = x + y * blockDim.x * gridDim.x;
 
-    float  sub[16][16];
+    __shared__ float  sub[16][16];
 
     // now calculate the value at that position
     const float period = 128.0f;
 
-    __shared__ sub[threadIdx.x][threadIdx.y] =
+    sub[threadIdx.x][threadIdx.y] =
             255 * (sinf(x*2.0f*PI/ period) + 1.0f) *
                   (sinf(y*2.0f*PI/ period) + 1.0f) / 4.0f;
     __syncthreads();
